@@ -1,0 +1,11 @@
+[project]
+name = "rcai-virtual-track"
+version = "0.1.0"
+description = "Deterministic virtual slot-car hardware platform"
+readme = "README.md"
+requires-python = ">=3.13"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
