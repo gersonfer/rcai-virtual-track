@@ -1,0 +1,31 @@
+{
+  "track_name": "Virtual Hypercar Track",
+
+  "serial": {
+    "port": "/dev/pts/3",
+    "baudrate": 115200
+  },
+
+  "lanes": [
+    {
+      "lane_id": 1,
+      "sensor_pin": 2,
+      "relay_pin": 22
+    },
+    {
+      "lane_id": 2,
+      "sensor_pin": 3,
+      "relay_pin": 23
+    },
+    {
+      "lane_id": 3,
+      "sensor_pin": 4,
+      "relay_pin": 24
+    },
+    {
+      "lane_id": 4,
+      "sensor_pin": 5,
+      "relay_pin": 25
+    }
+  ]
+}

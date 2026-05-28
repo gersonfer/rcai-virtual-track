@@ -1,0 +1,108 @@
+{
+  "profiles": [
+    {
+      "id": "ferrari_499p",
+      "name": "Ferrari 499P",
+      "category": "Hypercar",
+
+      "performance": {
+        "avg_lap": 4.20,
+        "min_lap": 4.05,
+        "max_lap": 4.60,
+
+        "consistency": 0.93,
+        "variation": 0.12,
+
+        "top_speed_factor": 1.00,
+        "cornering_factor": 0.96
+      },
+
+      "behavior": {
+        "aggression": 0.70,
+        "deslot_probability": 0.010,
+        "recovery_time_avg": 2.0
+      },
+
+      "fuel": {
+        "enabled": false,
+        "tank_capacity": 0,
+        "consumption_per_lap": 0
+      },
+
+      "tires": {
+        "enabled": false,
+        "wear_rate": 0
+      }
+    },
+
+    {
+      "id": "porsche_963",
+      "name": "Porsche 963",
+      "category": "Hypercar",
+
+      "performance": {
+        "avg_lap": 4.35,
+        "min_lap": 4.15,
+        "max_lap": 4.80,
+
+        "consistency": 0.89,
+        "variation": 0.18,
+
+        "top_speed_factor": 0.98,
+        "cornering_factor": 0.94
+      },
+
+      "behavior": {
+        "aggression": 0.82,
+        "deslot_probability": 0.020,
+        "recovery_time_avg": 2.5
+      },
+
+      "fuel": {
+        "enabled": false,
+        "tank_capacity": 0,
+        "consumption_per_lap": 0
+      },
+
+      "tires": {
+        "enabled": false,
+        "wear_rate": 0
+      }
+    },
+
+    {
+      "id": "toyota_gr010",
+      "name": "Toyota GR010",
+      "category": "Hypercar",
+
+      "performance": {
+        "avg_lap": 4.28,
+        "min_lap": 4.10,
+        "max_lap": 4.70,
+
+        "consistency": 0.95,
+        "variation": 0.10,
+
+        "top_speed_factor": 0.99,
+        "cornering_factor": 0.97
+      },
+
+      "behavior": {
+        "aggression": 0.60,
+        "deslot_probability": 0.008,
+        "recovery_time_avg": 1.8
+      },
+
+      "fuel": {
+        "enabled": false,
+        "tank_capacity": 0,
+        "consumption_per_lap": 0
+      },
+
+      "tires": {
+        "enabled": false,
+        "wear_rate": 0
+      }
+    }
+  ]
+}
