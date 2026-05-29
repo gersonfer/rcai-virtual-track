@@ -3,7 +3,7 @@
 import threading
 import time
 
-from lap_generator import (
+from orchestrator.lap_generator import (
     LapGenerator,
 )
 

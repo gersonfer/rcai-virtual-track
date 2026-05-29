@@ -103,6 +103,42 @@
         "enabled": false,
         "wear_rate": 0
       }
+    },
+
+    {
+      "id": "cadillac_vseriesr",
+      "name": "Cadillac V-Series.R",
+      "category": "Hypercar",
+
+      "performance": {
+        "avg_lap": 4.45,
+        "min_lap": 4.20,
+        "max_lap": 4.90,
+
+        "consistency": 0.95,
+        "variation": 0.10,
+
+        "top_speed_factor": 0.99,
+        "cornering_factor": 0.97
+      },
+
+      "behavior": {
+        "aggression": 0.60,
+        "deslot_probability": 0.015,
+        "recovery_time_avg": 1.8,
+        "drift_factor": 0.12
+      },
+
+      "fuel": {
+        "enabled": false,
+        "tank_capacity": 0,
+        "consumption_per_lap": 0
+      },
+
+      "tires": {
+        "enabled": false,
+        "wear_rate": 0
+      }
     }
   ]
 }

@@ -2,7 +2,7 @@
   "track_name": "Virtual Hypercar Track",
 
   "serial": {
-    "port": "/dev/pts/3",
+    "port": "/dev/pts/4",
     "baudrate": 115200
   },
 

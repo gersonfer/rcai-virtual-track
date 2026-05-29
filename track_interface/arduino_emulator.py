@@ -4,7 +4,7 @@ import threading
 import time
 import serial
 
-from serial_protocol import (
+from track_interface.serial_protocol import (
     build_version,
     build_heartbeat,
     build_input_on,
@@ -15,7 +15,7 @@ from serial_protocol import (
     bytes_to_hex,
 )
 
-from gpio_runtime import (
+from track_interface.gpio_runtime import (
     GPIORuntime,
 )
 
@@ -23,7 +23,7 @@ from gpio_runtime import (
 # CONFIG
 # ============================================================
 
-PORT = "/dev/pts/3"
+PORT = "/dev/pts/4"
 BAUDRATE = 115200
 
 HEARTBEAT_INTERVAL = 0.5
@@ -165,6 +165,11 @@ class ArduinoEmulator:
         self,
         payload: bytes,
     ):
+
+        print(
+            "[COMMAND RAW]",
+            bytes_to_hex(payload)
+        )
 
         parsed = parse_command(payload)
 

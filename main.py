@@ -73,17 +73,17 @@ emulator.start()
 # Lane 3 -> Empty
 # Lane 4 -> Cadillac
 
-lane_assignment.assign(
+lane_assignment.assign_profile(
     lane_id=1,
     profile_id="ferrari_499p",
 )
 
-lane_assignment.assign(
+lane_assignment.assign_profile(
     lane_id=2,
     profile_id="porsche_963",
 )
 
-lane_assignment.assign(
+lane_assignment.assign_profile(
     lane_id=4,
     profile_id="cadillac_vseriesr",
 )

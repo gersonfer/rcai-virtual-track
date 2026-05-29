@@ -32,7 +32,7 @@ class GPIORuntime:
 
         self._pins: Dict[int, GPIOPin] = {}
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
     # ========================================================
 
