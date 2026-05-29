@@ -16,6 +16,7 @@ TERMINATOR = 0x3B  # ';'
 OPCODE_VERSION = 0x56      # 'V'
 OPCODE_HEARTBEAT = 0x54    # 'T'
 OPCODE_INPUT = 0x49        # 'I'
+OPCODE_OUTPUT = 0x4F       # 'O'
 
 # ============================================================
 # PIN TYPES
@@ -47,6 +48,7 @@ TIME_RESET_COMMAND = bytearray([
 MESSAGE_RESET = "RESET"
 MESSAGE_TIME_RESET = "TIME_RESET"
 MESSAGE_UNKNOWN = "UNKNOWN"
+MESSAGE_PIN_WRITE = "PIN_WRITE"
 
 # ============================================================
 # PARSED MESSAGE
@@ -56,6 +58,9 @@ MESSAGE_UNKNOWN = "UNKNOWN"
 class ParsedCommand:
     message_type: str
     raw_payload: bytes
+    pin: Optional[int] = None
+    state: Optional[int] = None
+    is_digital: Optional[bool] = None
 
 # ============================================================
 # BUILDERS
@@ -158,6 +163,18 @@ def parse_command(
             raw_payload=payload,
         )
 
+    # O D pin state ;
+    # O A pin state ;
+    if len(buffer) == 4 and buffer[0] == OPCODE_OUTPUT:
+
+        return ParsedCommand(
+            message_type=MESSAGE_PIN_WRITE,
+            raw_payload=payload,
+            pin=buffer[2],
+            state=buffer[3],
+            is_digital=(buffer[1] == DIGITAL),
+        )
+
     return ParsedCommand(
         message_type=MESSAGE_UNKNOWN,
         raw_payload=payload,
@@ -205,9 +222,23 @@ if __name__ == "__main__":
     print("\nINPUT OFF")
     print(bytes_to_hex(sensor_off))
 
-    parsed = parse_command(
+    parsed_high = parse_command(
+        bytes([0x4F, 0x44, 0x16, 0x01, 0x3B])
+    )
+
+    print("\nPARSED WRITE HIGH")
+    print(parsed_high)
+
+    parsed_low = parse_command(
+        bytes([0x4F, 0x44, 0x16, 0x00, 0x3B])
+    )
+
+    print("\nPARSED WRITE LOW")
+    print(parsed_low)
+
+    parsed_reset = parse_command(
         b"RESET;"
     )
 
-    print("\nPARSED")
-    print(parsed)
+    print("\nPARSED RESET")
+    print(parsed_reset)

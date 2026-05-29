@@ -12,6 +12,7 @@ from track_interface.serial_protocol import (
     parse_command,
     MESSAGE_RESET,
     MESSAGE_TIME_RESET,
+    MESSAGE_PIN_WRITE,
     bytes_to_hex,
 )
 
@@ -52,6 +53,8 @@ class ArduinoEmulator:
         self.last_heartbeat = time.monotonic()
 
         self.gpio = GPIORuntime()
+
+        self.output_states = {}
 
         self.serial = serial.Serial(
             self.port,
@@ -205,6 +208,23 @@ class ArduinoEmulator:
 
         # ----------------------------------------------------
 
+        if parsed.message_type == MESSAGE_PIN_WRITE:
+
+            pin = parsed.pin
+            state = bool(parsed.state)
+
+            self.output_states[pin] = state
+
+            state_str = "ON" if state else "OFF"
+            
+            print(
+                f"[OUTPUT] PIN {pin} -> {state_str}"
+            )
+
+            return
+
+        # ----------------------------------------------------
+
         print(
             "[COMMAND] UNKNOWN"
         )
@@ -226,6 +246,26 @@ class ArduinoEmulator:
             "[TX]",
             bytes_to_hex(payload)
         )
+
+    # ========================================================
+    # OUTPUT API
+    # ========================================================
+
+    def get_output_state(
+        self,
+        pin: int,
+    ) -> bool:
+
+        return self.output_states.get(pin, False)
+
+    # ========================================================
+
+    def is_lane_powered(
+        self,
+        relay_pin: int,
+    ) -> bool:
+
+        return self.get_output_state(relay_pin)
 
     # ========================================================
     # GPIO SENSOR API
@@ -289,6 +329,12 @@ if __name__ == "__main__":
     )
 
     emulator.start()
+
+    emulator.output_states[22] = True
+    print(f"is_lane_powered(22) -> {emulator.is_lane_powered(22)}")
+
+    emulator.output_states[22] = False
+    print(f"is_lane_powered(22) -> {emulator.is_lane_powered(22)}")
 
     # --------------------------------------------------------
     # DEBUG TEST LOOP
