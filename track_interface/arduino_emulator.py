@@ -24,9 +24,6 @@ from track_interface.gpio_runtime import (
 # CONFIG
 # ============================================================
 
-PORT = "/dev/pts/4"
-BAUDRATE = 115200
-
 HEARTBEAT_INTERVAL = 0.5
 
 # ============================================================
@@ -323,9 +320,21 @@ class ArduinoEmulator:
 
 if __name__ == "__main__":
 
+    import json
+    import os
+
+    config_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "config",
+        "track.json",
+    )
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
     emulator = ArduinoEmulator(
-        port=PORT,
-        baudrate=BAUDRATE,
+        port=config["serial"]["port"],
+        baudrate=config["serial"]["baudrate"],
     )
 
     emulator.start()

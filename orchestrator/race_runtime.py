@@ -89,6 +89,8 @@ class RaceRuntime:
 
         sensor_pin = lane["sensor_pin"]
 
+        relay_pin = lane["relay_pin"]
+
         print(
             f"[LANE {lane_id}] "
             f"Runtime started"
@@ -137,6 +139,25 @@ class RaceRuntime:
                 )
 
                 time.sleep(1)
+
+                continue
+
+            # ------------------------------------------------
+            # CHECK RELAY POWER
+            # ------------------------------------------------
+
+            powered = self.emulator.is_lane_powered(
+                relay_pin
+            )
+
+            if powered is False:
+
+                print(
+                    f"[LANE {lane_id}] "
+                    f"POWER OFF"
+                )
+
+                time.sleep(0.1)
 
                 continue
 
