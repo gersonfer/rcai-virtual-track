@@ -207,6 +207,49 @@ no vehicle moves until the RC AI energizes the lanes.
 - Acceleration
 
 
+### [ ] TASK-004.2 — Configurable Serial Debug Logging
+
+Problem
+
+TX/RX frame dumps generate excessive console noise.
+
+Goal
+
+Allow enabling/disabling low-level serial logs.
+
+Modes:
+
+NORMAL
+- Show lane events.
+- Show state transitions.
+- Show deslots.
+- Show laps.
+- Hide TX/RX byte streams.
+
+DEBUG
+- Show everything.
+- TX frames.
+- RX frames.
+- Raw commands.
+- Parser diagnostics.
+
+Restrictions
+
+- No protocol changes.
+- No runtime changes.
+- Logging only.
+
+Homologation
+
+1. NORMAL mode hides TX/RX logs.
+2. DEBUG mode shows TX/RX logs.
+3. Runtime behavior remains identical.
+
+Em função da Task-005 , verificar :
+Verificar se set_profile() precisa ocorrer a cada loop
+ou apenas quando houver troca de carro na lane.
+
+
 
 
 

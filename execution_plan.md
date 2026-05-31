@@ -107,32 +107,58 @@ Homologation criteria:
 7. Verify a single STOPPED/OFF message.
 8. No repeated spam messages.
 
+---
 
-### [ ] TASK-005 — Driver Persistance
+### [ ] TASK-005 — Persistent Driver Model
 
 Problem
 
-Today a new LapGenerator is created every lap.
+Today a new LapGenerator instance is created every lap.
 
-Current:
+Current
 
-python generator = LapGenerator(profile) result = generator.generate_lap() 
+generator = LapGenerator(profile)
+result = generator.generate_lap()
 
-This prevents any future driver memory.
+This prevents future stateful driver behavior.
 
-Expected
+Goal
 
-A driver instance should exist for the lifetime of the lane.
+Introduce a persistent DriverModel object per lane.
 
-Conceptually:
+A DriverModel instance must be created once when the lane runtime starts and reused for the entire lane lifetime.
 
-text Lane 1  └─ Driver  Lane 2  └─ Driver  Lane 3  └─ Driver  Lane 4  └─ Driver 
+Conceptually
+
+Lane 1
+ └─ DriverModel
+
+Lane 2
+ └─ DriverModel
+
+Lane 3
+ └─ DriverModel
+
+Lane 4
+ └─ DriverModel
 
 Acceptance Criteria
 
-- Driver object persists during runtime.
-- Driver survives multiple laps.
-- No behavioral changes yet.
+- DriverModel instance persists for the lifetime of the lane.
+- DriverModel survives multiple laps.
+- DriverModel is created once per lane.
+- Lap generation continues to work.
+- No behavior changes.
+- No deslot changes.
+- No relay changes.
+- No state machine changes.
+
+Homologation
+
+1. Runtime starts normally.
+2. Laps continue being generated.
+3. No observable behavior changes from TASK-004.1.
+4. Existing homologation remains valid.
 
 ---
 
