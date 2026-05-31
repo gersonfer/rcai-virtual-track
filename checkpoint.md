@@ -169,5 +169,35 @@ Validation steps executed:
 
 ## Next Task
 
+### TASK-005.2 — GAP-001 Validation
+Status: Completed
+Homologation: Pending Approval
+
+Files modified:
+- `track_interface/arduino_emulator.py`
+
+Changes:
+- Added `DEBUG_GAP001 = True` config flag.
+- Added `_last_time_reset_ts` instance variable to track when the last T; was received.
+- Modified `heartbeat_loop` to snapshot `reset_flag` before clearing it, then log heartbeat timing and `reset_flag` value relative to last T; reception.
+- Modified `handle_command` (TIME_RESET branch) to record the reception timestamp and log at +0 ms.
+
+Expected log output (hypothesis: CONFIRMED gap):
+```
+[GAP001] T; received at +0 ms (reset_flag currently=0)
+[GAP001] HEARTBEAT sent +487.3ms after T; reset_flag=1
+[GAP001] HEARTBEAT sent +986.5ms after T; reset_flag=0
+```
+
+Expected log output (hypothesis: gap NOT present):
+```
+[GAP001] T; received at +0 ms (reset_flag currently=0)
+[GAP001] HEARTBEAT sent +11.2ms after T; reset_flag=1
+```
+
+No behavior changes were made. This is instrumentation only.
+
+## Next Task
+
 Task-006
 Status: Not Started

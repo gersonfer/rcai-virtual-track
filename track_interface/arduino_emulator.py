@@ -27,6 +27,10 @@ from track_interface.gpio_runtime import (
 HEARTBEAT_INTERVAL = 0.5
 DEBUG_SERIAL = False
 
+# Set to True to enable GAP-001 timing instrumentation.
+# Logs every T; reception and every heartbeat with reset_flag and ms since last T;.
+DEBUG_GAP001 = True
+
 # ============================================================
 # EMULATOR
 # ============================================================
@@ -47,6 +51,9 @@ class ArduinoEmulator:
         self.version_verified = False
 
         self.reset_flag = 1
+
+        # GAP-001 instrumentation: tracks when the last T; was received.
+        self._last_time_reset_ts = None
 
         self.last_heartbeat = time.monotonic()
 
@@ -107,12 +114,30 @@ class ArduinoEmulator:
 
             self.last_heartbeat = now
 
+            current_reset_flag = self.reset_flag
+
             msg = build_heartbeat(
                 delta_us=delta_us,
-                reset_flag=self.reset_flag,
+                reset_flag=current_reset_flag,
             )
 
             self.send(msg)
+
+            # GAP-001 instrumentation
+            if DEBUG_GAP001:
+                if self._last_time_reset_ts is not None:
+                    elapsed_ms = (now - self._last_time_reset_ts) * 1000
+                    print(
+                        f"[GAP001] HEARTBEAT sent "
+                        f"+{elapsed_ms:.1f}ms after T; "
+                        f"reset_flag={current_reset_flag}"
+                    )
+                else:
+                    print(
+                        f"[GAP001] HEARTBEAT sent "
+                        f"(no T; received yet) "
+                        f"reset_flag={current_reset_flag}"
+                    )
 
             self.reset_flag = 0
 
@@ -202,6 +227,14 @@ class ArduinoEmulator:
             print(
                 "[COMMAND] TIME RESET"
             )
+
+            # GAP-001 instrumentation
+            if DEBUG_GAP001:
+                self._last_time_reset_ts = time.monotonic()
+                print(
+                    "[GAP001] T; received at +0 ms "
+                    f"(reset_flag currently={self.reset_flag})"
+                )
 
             self.reset_flag = 1
 
