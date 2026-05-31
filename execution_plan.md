@@ -109,6 +109,122 @@ Homologation criteria:
 
 ---
 
+### [ ] TASK-004.2 — Configurable Serial Debug Logging
+
+Problem
+
+Serial RX/TX debug messages generate excessive log noise during runtime homologation.
+
+Current:
+
+[TX] 0x54 ...
+[TX] 0x54 ...
+[RX] 0x4F ...
+[RX] 0x44 ...
+...
+
+These messages are useful for protocol debugging but make behavioral validation difficult.
+
+⸻
+
+Objective
+
+Make serial RX/TX logging configurable.
+
+Default behavior must be:
+
+DEBUG_SERIAL = False
+
+When disabled:
+
+[TX] ...
+[RX] ...
+[RX COMMAND] ...
+[COMMAND RAW] ...
+
+must not be printed.
+
+When enabled:
+
+DEBUG_SERIAL = True
+
+all existing serial debug messages must behave exactly as today.
+
+⸻
+
+Implementation Requirements
+
+Create a single configuration flag:
+
+DEBUG_SERIAL = False
+
+Use the existing logging points.
+
+Do not change:
+
+* protocol behavior
+* serial transport
+* command parser
+* runtime timing
+* lap generation
+* GPIO behavior
+* relay behavior
+
+No new classes.
+
+No new managers.
+
+No refactoring beyond conditional logging.
+
+⸻
+
+Acceptance Criteria
+
+1. Start runtime with:
+
+DEBUG_SERIAL = False
+
+Verify:
+
+[TX] ...
+[RX] ...
+
+messages are absent.
+
+2. Verify:
+
+LAP
+STATE
+DESLOT
+GPIO
+
+messages continue to appear normally.
+
+3. Change to:
+
+DEBUG_SERIAL = True
+
+4. Restart runtime.
+5. Verify all existing RX/TX debug messages reappear exactly as before.
+6. No behavioral changes in lap generation or race execution.
+
+⸻
+
+Expected Deliverable
+
+Files modified:
+
+emulator/*
+or serial logging module only
+
+Checkpoint update.
+
+Atomic commit:
+
+TASK-004.2: Add configurable serial debug logging
+
+
+
 ### [ ] TASK-005 — Persistent Driver Model
 
 Problem
