@@ -107,5 +107,25 @@ Validation steps executed:
 
 ## Next Task
 
+### TASK-004.1 — Runtime Logging Cleanup
+Status: Completed
+Homologation: Pending Approval
+
+Files modified:
+- `orchestrator/race_runtime.py`
+
+Architectural decisions:
+- Introduced a local `current_state` variable in the `lane_loop` to track transitions using the `VehicleState` enum.
+- Replaced the repetitive `POWER OFF` log with event-oriented logs (`STATE -> STOPPED`, `STATE -> POWERED`, `STATE -> DESLOTTED`) that only trigger on transitions.
+- Kept the detection local to the loop without creating any new managers or state machines.
+- Retained the existing relay and lap logic unmodified.
+
+Validation steps executed:
+- Confirmed that starting the runtime with relays OFF outputs a single `STATE -> STOPPED` message per lane.
+- Confirmed that toggling the relay ON outputs a single `STATE -> POWERED` message per lane.
+- Confirmed that deslotting outputs a single `STATE -> DESLOTTED` message per lane.
+
+## Next Task
+
 Task-005
 Status: Not Started

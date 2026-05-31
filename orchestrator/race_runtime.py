@@ -96,6 +96,9 @@ class RaceRuntime:
             f"Runtime started"
         )
 
+        from orchestrator.vehicle_state import VehicleState
+        current_state = None
+
         while self.running:
 
             # ------------------------------------------------
@@ -152,14 +155,17 @@ class RaceRuntime:
 
             if powered is False:
 
-                print(
-                    f"[LANE {lane_id}] "
-                    f"POWER OFF"
-                )
+                if current_state != VehicleState.STOPPED:
+                    print(f"[LANE {lane_id}] STATE -> STOPPED")
+                    current_state = VehicleState.STOPPED
 
                 time.sleep(0.1)
 
                 continue
+
+            if current_state != VehicleState.POWERED:
+                print(f"[LANE {lane_id}] STATE -> POWERED")
+                current_state = VehicleState.POWERED
 
             # ------------------------------------------------
             # GENERATE LAP
@@ -194,6 +200,10 @@ class RaceRuntime:
             # ------------------------------------------------
 
             if deslotted:
+
+                if current_state != VehicleState.DESLOTTED:
+                    print(f"[LANE {lane_id}] STATE -> DESLOTTED")
+                    current_state = VehicleState.DESLOTTED
 
                 print(
                     f"[LANE {lane_id}] "
