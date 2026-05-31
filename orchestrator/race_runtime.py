@@ -3,8 +3,8 @@
 import threading
 import time
 
-from orchestrator.lap_generator import (
-    LapGenerator,
+from orchestrator.driver_model import (
+    DriverModel,
 )
 
 # ============================================================
@@ -99,6 +99,8 @@ class RaceRuntime:
         from orchestrator.vehicle_state import VehicleState
         current_state = None
 
+        driver = DriverModel()
+
         while self.running:
 
             # ------------------------------------------------
@@ -145,6 +147,8 @@ class RaceRuntime:
 
                 continue
 
+            driver.set_profile(profile)
+
             # ------------------------------------------------
             # CHECK RELAY POWER
             # ------------------------------------------------
@@ -171,12 +175,8 @@ class RaceRuntime:
             # GENERATE LAP
             # ------------------------------------------------
 
-            generator = LapGenerator(
-                profile
-            )
-
             result = (
-                generator.generate_lap()
+                driver.generate_lap()
             )
 
             lap_time = result.lap_time

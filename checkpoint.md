@@ -127,5 +127,27 @@ Validation steps executed:
 
 ## Next Task
 
-Task-005
+### TASK-005 — Persistent Driver Model
+Status: Completed
+Homologation: Pending Approval
+
+Files modified:
+- `orchestrator/lap_generator.py` (renamed to `orchestrator/driver_model.py`)
+- `orchestrator/driver_model.py` (refactored `LapGenerator` to `DriverModel` and added `set_profile`)
+- `orchestrator/race_runtime.py`
+
+Architectural decisions:
+- Transformed the transient `LapGenerator` into a persistent `DriverModel` object.
+- Created a single `DriverModel` instance per lane before the `while self.running:` loop.
+- The runtime dynamically injects the lane's profile into the `DriverModel` using `set_profile` on every iteration, instead of reconstructing the object.
+- Existing behaviors remain unmodified.
+
+Validation steps executed:
+- Confirmed that the runtime compiles successfully with the renamed module and refactored class.
+- Confirmed that lap generation output is functionally identical to previous tasks.
+- Confirmed that `driver.generate_lap()` runs seamlessly with dynamic profile assignment.
+
+## Next Task
+
+Task-006
 Status: Not Started

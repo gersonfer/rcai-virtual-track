@@ -1,4 +1,4 @@
-# orchestrator/lap_generator.py
+# orchestrator/driver_model.py
 
 import random
 from dataclasses import dataclass
@@ -17,12 +17,18 @@ class LapResult:
     recovery_time: float
 
 # ============================================================
-# LAP GENERATOR
+# DRIVER MODEL
 # ============================================================
 
-class LapGenerator:
+class DriverModel:
 
-    def __init__(
+    def __init__(self):
+
+        self.profile = None
+        self.performance = None
+        self.behavior = None
+
+    def set_profile(
         self,
         profile: dict,
     ):
@@ -127,13 +133,12 @@ if __name__ == "__main__":
         },
     }
 
-    generator = LapGenerator(
-        example_profile
-    )
+    driver = DriverModel()
+    driver.set_profile(example_profile)
 
     for i in range(20):
 
-        result = generator.generate_lap()
+        result = driver.generate_lap()
 
         print(
             f"LAP {i+1:02d} | "
