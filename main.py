@@ -84,6 +84,11 @@ lane_assignment.assign_profile(
 )
 
 lane_assignment.assign_profile(
+    lane_id=3,
+    profile_id="toyota_gr010",
+)
+
+lane_assignment.assign_profile(
     lane_id=4,
     profile_id="cadillac_vseriesr",
 )
