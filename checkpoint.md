@@ -149,5 +149,25 @@ Validation steps executed:
 
 ## Next Task
 
+### TASK-004.2 — Configurable Serial Debug Logging
+Status: Completed
+Homologation: Pending Approval
+
+Files modified:
+- `track_interface/arduino_emulator.py`
+
+Architectural decisions:
+- Introduced a `DEBUG_SERIAL = False` flag in `arduino_emulator.py`.
+- Wrapped the highly verbose `[TX]`, `[RX]`, `[RX COMMAND]`, and `[COMMAND RAW]` logs in a conditional check against `DEBUG_SERIAL`.
+- Did not change any protocol behavior, runtime timing, or execution logic.
+- Kept other diagnostic logs (LAP, STATE, DESLOT, OUTPUT) unmodified.
+
+Validation steps executed:
+- Confirmed that setting `DEBUG_SERIAL = False` suppresses the raw byte streams and command logs, leaving only event-oriented behavior logs.
+- Confirmed that setting `DEBUG_SERIAL = True` restores all original verbose RX/TX messages.
+- Confirmed no lap generation or race execution flow was altered.
+
+## Next Task
+
 Task-006
 Status: Not Started

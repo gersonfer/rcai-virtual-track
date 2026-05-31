@@ -25,6 +25,7 @@ from track_interface.gpio_runtime import (
 # ============================================================
 
 HEARTBEAT_INTERVAL = 0.5
+DEBUG_SERIAL = False
 
 # ============================================================
 # EMULATOR
@@ -136,18 +137,20 @@ class ArduinoEmulator:
 
             byte = data[0]
 
-            print(
-                f"[RX] {hex(byte)}"
-            )
+            if DEBUG_SERIAL:
+                print(
+                    f"[RX] {hex(byte)}"
+                )
 
             if byte == 0x3B:
 
                 payload = bytes(buffer) + bytes([0x3B])
 
-                print(
-                    "[RX COMMAND]",
-                    bytes_to_hex(payload)
-                )
+                if DEBUG_SERIAL:
+                    print(
+                        "[RX COMMAND]",
+                        bytes_to_hex(payload)
+                    )
 
                 self.handle_command(payload)
 
@@ -166,10 +169,11 @@ class ArduinoEmulator:
         payload: bytes,
     ):
 
-        print(
-            "[COMMAND RAW]",
-            bytes_to_hex(payload)
-        )
+        if DEBUG_SERIAL:
+            print(
+                "[COMMAND RAW]",
+                bytes_to_hex(payload)
+            )
 
         parsed = parse_command(payload)
 
@@ -239,10 +243,11 @@ class ArduinoEmulator:
 
         self.serial.flush()
 
-        print(
-            "[TX]",
-            bytes_to_hex(payload)
-        )
+        if DEBUG_SERIAL:
+            print(
+                "[TX]",
+                bytes_to_hex(payload)
+            )
 
     # ========================================================
     # OUTPUT API
