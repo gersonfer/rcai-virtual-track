@@ -200,8 +200,16 @@ No behavior changes were made. This is instrumentation only.
 ## Next Task
 
 ### TASK-006 — Dynamic Pin Mapping Fix
-Status: Completed
-Homologation: Pending Approval
+Status: Executed
+Result: Failed Homologation
+Evidence:
+- PI recognized
+- PO recognized
+- Dynamic mapping active
+- INPUT events still do not generate laps inside RC AI
+
+Conclusion:
+GAP-A is not the root cause of the missing lap problem.
 
 Files modified:
 - `track_interface/serial_protocol.py`
@@ -222,10 +230,28 @@ Mapping strategy:
 - `output_pin_map`: Maps protocol indices to physical relay pins.
 - Falls back to physical pins if no mapping is found (preserving standalone mode).
 
-Homologation steps:
-1. Start the emulator and connect RC AI.
-2. Confirm `PI` and `PO` commands are recognized and pin mappings are logged.
-3. Verify relay ON/OFF from RC AI controls the correct lanes.
-4. Verify lap pulses are sent using protocol indices.
-5. Verify 60-second heat without Pause/Restart records laps on all active lanes.
-6. Verify GAP-001 logs are still printed.
+## Next Task
+
+### TASK-006.1 — Protocol Differential Analysis
+Status: Executed
+Result: Completed (No Code Changes)
+
+Produced `docs/protocol_differential_analysis.md` identifying two critical temporal hypotheses (GAP-B and GAP-001 Sync Delay) responsible for missing laps.
+
+## Next Task
+
+### TASK-006.2 — GAP-B Validation Instrumentation
+Status: Completed
+Homologation: Ready for Homologation
+
+Files modified:
+- `track_interface/arduino_emulator.py`
+- `docs/gap_b_validation_plan.md` (Created)
+
+Changes:
+- Added `_flush_heartbeat()` method to `ArduinoEmulator`.
+- Called `_flush_heartbeat()` immediately before transmitting `INPUT` messages in `sensor_on()` and `sensor_off()`.
+- Added diagnostic log `[GAP-B] HEARTBEAT FLUSH BEFORE INPUT`.
+- Maintained all existing race behaviors, pin mappings, and async heartbeat loops.
+
+Please perform the homologation according to `docs/gap_b_validation_plan.md`.

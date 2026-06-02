@@ -383,6 +383,25 @@ class ArduinoEmulator:
     # GPIO SENSOR API
     # ========================================================
 
+    def _flush_heartbeat(self):
+        now = time.monotonic()
+        delta_us = int((now - self.last_heartbeat) * 1_000_000)
+        self.last_heartbeat = now
+        
+        current_reset_flag = self.reset_flag
+        
+        msg = build_heartbeat(
+            delta_us=delta_us,
+            reset_flag=current_reset_flag,
+        )
+        
+        self.send(msg)
+        self.reset_flag = 0
+        
+        print("[GAP-B] HEARTBEAT FLUSH BEFORE INPUT")
+
+    # ========================================================
+
     def sensor_on(
         self,
         pin: int,
@@ -391,6 +410,8 @@ class ArduinoEmulator:
         self.gpio.set_pin_high(pin)
 
         proto_pin = self.input_pin_map.get(pin, pin)
+
+        self._flush_heartbeat()
 
         msg = build_input_on(
             pin=proto_pin,
@@ -409,6 +430,8 @@ class ArduinoEmulator:
         self.gpio.set_pin_low(pin)
 
         proto_pin = self.input_pin_map.get(pin, pin)
+
+        self._flush_heartbeat()
 
         msg = build_input_off(
             pin=proto_pin,
