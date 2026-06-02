@@ -13,6 +13,8 @@ from track_interface.serial_protocol import (
     MESSAGE_RESET,
     MESSAGE_TIME_RESET,
     MESSAGE_PIN_WRITE,
+    MESSAGE_PIN_MODE_READ,
+    MESSAGE_PIN_MODE_WRITE,
     bytes_to_hex,
 )
 
@@ -41,10 +43,12 @@ class ArduinoEmulator:
         self,
         port: str,
         baudrate: int,
+        lanes_config: list = None,
     ):
 
         self.port = port
         self.baudrate = baudrate
+        self.lanes_config = lanes_config or []
 
         self.running = False
 
@@ -60,6 +64,10 @@ class ArduinoEmulator:
         self.gpio = GPIORuntime()
 
         self.output_states = {}
+
+        self.input_pin_map = {}
+
+        self.output_pin_map = {}
 
         self.serial = serial.Serial(
             self.port,
@@ -242,17 +250,86 @@ class ArduinoEmulator:
 
         # ----------------------------------------------------
 
+        if parsed.message_type == MESSAGE_PIN_MODE_READ:
+
+            print(
+                "[COMMAND] PIN_MODE_READ"
+            )
+
+            pins = parsed.pins or []
+
+            for i, proto_idx in enumerate(pins):
+
+                if i < len(self.lanes_config):
+
+                    physical_pin = self.lanes_config[i]["sensor_pin"]
+
+                    self.input_pin_map[physical_pin] = proto_idx
+
+                    print(
+                        f"[PIN MAP] Input: "
+                        f"physical sensor {physical_pin} "
+                        f"-> protocol D{proto_idx}"
+                    )
+
+            for physical_pin, proto_idx in self.input_pin_map.items():
+
+                self.gpio.set_pin_high(physical_pin)
+
+                msg = build_input_on(
+                    pin=proto_idx,
+                    is_digital=True,
+                )
+
+                self.send(msg)
+
+            return
+
+        # ----------------------------------------------------
+
+        if parsed.message_type == MESSAGE_PIN_MODE_WRITE:
+
+            print(
+                "[COMMAND] PIN_MODE_WRITE"
+            )
+
+            pins = parsed.pins or []
+
+            for i, proto_idx in enumerate(pins):
+
+                if i < len(self.lanes_config):
+
+                    physical_pin = self.lanes_config[i]["relay_pin"]
+
+                    self.output_pin_map[proto_idx] = physical_pin
+
+                    print(
+                        f"[PIN MAP] Output: "
+                        f"protocol D{proto_idx} "
+                        f"-> physical relay {physical_pin}"
+                    )
+
+            return
+
+        # ----------------------------------------------------
+
         if parsed.message_type == MESSAGE_PIN_WRITE:
 
-            pin = parsed.pin
+            proto_pin = parsed.pin
             state = bool(parsed.state)
 
-            self.output_states[pin] = state
+            if proto_pin in self.output_pin_map:
+                physical_pin = self.output_pin_map[proto_pin]
+            else:
+                physical_pin = proto_pin
+
+            self.output_states[physical_pin] = state
 
             state_str = "ON" if state else "OFF"
             
             print(
-                f"[OUTPUT] PIN {pin} -> {state_str}"
+                f"[OUTPUT] PIN {physical_pin} "
+                f"(proto D{proto_pin}) -> {state_str}"
             )
 
             return
@@ -313,8 +390,10 @@ class ArduinoEmulator:
 
         self.gpio.set_pin_high(pin)
 
+        proto_pin = self.input_pin_map.get(pin, pin)
+
         msg = build_input_on(
-            pin=pin,
+            pin=proto_pin,
             is_digital=True,
         )
 
@@ -329,8 +408,10 @@ class ArduinoEmulator:
 
         self.gpio.set_pin_low(pin)
 
+        proto_pin = self.input_pin_map.get(pin, pin)
+
         msg = build_input_off(
-            pin=pin,
+            pin=proto_pin,
             is_digital=True,
         )
 
@@ -373,6 +454,7 @@ if __name__ == "__main__":
     emulator = ArduinoEmulator(
         port=config["serial"]["port"],
         baudrate=config["serial"]["baudrate"],
+        lanes_config=config.get("lanes", []),
     )
 
     emulator.start()

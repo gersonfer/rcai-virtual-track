@@ -49,6 +49,8 @@ MESSAGE_RESET = "RESET"
 MESSAGE_TIME_RESET = "TIME_RESET"
 MESSAGE_UNKNOWN = "UNKNOWN"
 MESSAGE_PIN_WRITE = "PIN_WRITE"
+MESSAGE_PIN_MODE_READ = "PIN_MODE_READ"
+MESSAGE_PIN_MODE_WRITE = "PIN_MODE_WRITE"
 
 # ============================================================
 # PARSED MESSAGE
@@ -61,6 +63,7 @@ class ParsedCommand:
     pin: Optional[int] = None
     state: Optional[int] = None
     is_digital: Optional[bool] = None
+    pins: Optional[list] = None
 
 # ============================================================
 # BUILDERS
@@ -174,6 +177,31 @@ def parse_command(
             state=buffer[3],
             is_digital=(buffer[1] == DIGITAL),
         )
+
+    # PI... or PO...
+    if len(buffer) >= 3 and buffer[0] == 0x50:  # 'P'
+        opcode_2 = buffer[1]
+        count = buffer[2]
+        pins = []
+        idx = 3
+        for _ in range(count):
+            if idx + 1 < len(buffer):
+                # buffer[idx] is type (D or A), buffer[idx + 1] is index
+                pins.append(buffer[idx + 1])
+                idx += 2
+
+        if opcode_2 == OPCODE_INPUT:
+            return ParsedCommand(
+                message_type=MESSAGE_PIN_MODE_READ,
+                raw_payload=payload,
+                pins=pins,
+            )
+        elif opcode_2 == OPCODE_OUTPUT:
+            return ParsedCommand(
+                message_type=MESSAGE_PIN_MODE_WRITE,
+                raw_payload=payload,
+                pins=pins,
+            )
 
     return ParsedCommand(
         message_type=MESSAGE_UNKNOWN,

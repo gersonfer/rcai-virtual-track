@@ -54,6 +54,7 @@ lane_assignment = (
 emulator = ArduinoEmulator(
     port=track_config["serial"]["port"],
     baudrate=track_config["serial"]["baudrate"],
+    lanes_config=track_config.get("lanes", []),
 )
 
 # ============================================================

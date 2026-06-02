@@ -199,5 +199,33 @@ No behavior changes were made. This is instrumentation only.
 
 ## Next Task
 
-Task-006
-Status: Not Started
+### TASK-006 — Dynamic Pin Mapping Fix
+Status: Completed
+Homologation: Pending Approval
+
+Files modified:
+- `track_interface/serial_protocol.py`
+- `track_interface/arduino_emulator.py`
+- `main.py`
+
+Protocol behavior implemented:
+- Parsed the `PI` and `PO` commands from RC AI to extract protocol pin indices.
+- Modified `ArduinoEmulator` to receive `lanes_config` and dynamically map physical sensor and relay pins to protocol indices based on list position.
+- Translated physical pins to protocol indices before sending `INPUT` messages (lap sensors).
+- Translated protocol indices to physical pins when receiving `OD` commands (relay output).
+- Broadcasted initial `HIGH` state for all configured input pins after `PI` is processed.
+- Ensured GAP-001 instrumentation remained untouched.
+- Added concise logs for `[PIN MAP]`.
+
+Mapping strategy:
+- `input_pin_map`: Maps physical sensor pins to protocol indices.
+- `output_pin_map`: Maps protocol indices to physical relay pins.
+- Falls back to physical pins if no mapping is found (preserving standalone mode).
+
+Homologation steps:
+1. Start the emulator and connect RC AI.
+2. Confirm `PI` and `PO` commands are recognized and pin mappings are logged.
+3. Verify relay ON/OFF from RC AI controls the correct lanes.
+4. Verify lap pulses are sent using protocol indices.
+5. Verify 60-second heat without Pause/Restart records laps on all active lanes.
+6. Verify GAP-001 logs are still printed.
