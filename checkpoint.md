@@ -255,3 +255,20 @@ Changes:
 - Maintained all existing race behaviors, pin mappings, and async heartbeat loops.
 
 Please perform the homologation according to `docs/gap_b_validation_plan.md`.
+
+## Next Task
+
+### TASK-006.3 — Identify Unknown Commands During Startup Handshake
+Status: Executed
+Result: Completed (Instrumentation only)
+
+Produced `docs/unknown_command_analysis.md` identifying the two unknown commands:
+1. Analog Read Pin Mode (`p`, `0x70`)
+2. Debounce Config (`d`, `0x64`)
+
+Files modified:
+- `track_interface/arduino_emulator.py` (Instrumented UNKNOWN command branch to output raw payload)
+- `docs/unknown_command_analysis.md` (Created)
+
+Conclusion:
+These commands are benign and do not require a response from the emulator. It is safe to ignore them.

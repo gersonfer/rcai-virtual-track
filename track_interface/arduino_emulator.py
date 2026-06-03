@@ -44,11 +44,13 @@ class ArduinoEmulator:
         port: str,
         baudrate: int,
         lanes_config: list = None,
+        relay_mode: str = "normally_open",
     ):
 
         self.port = port
         self.baudrate = baudrate
         self.lanes_config = lanes_config or []
+        self.relay_mode = relay_mode
 
         self.running = False
 
@@ -81,6 +83,9 @@ class ArduinoEmulator:
 
         print(
             f"[EMULATOR] Starting on {self.port}"
+        )
+        print(
+            f"[RELAYLOGIC] Configured relay mode at startup: {self.relay_mode}"
         )
 
         self.running = True
@@ -325,11 +330,23 @@ class ArduinoEmulator:
 
             self.output_states[physical_pin] = state
 
-            state_str = "ON" if state else "OFF"
+            # Determine interpreted power state based on relay mode
+            if self.relay_mode == "normally_closed":
+                interpreted_power = not state
+            else:
+                interpreted_power = state
+
+            raw_state_str = "HIGH" if state else "LOW"
+            interpreted_power_str = "ON" if interpreted_power else "OFF"
             
             print(
                 f"[OUTPUT] PIN {physical_pin} "
-                f"(proto D{proto_pin}) -> {state_str}"
+                f"(proto D{proto_pin}) -> {raw_state_str}"
+            )
+            
+            print(
+                f"[RELAYLOGIC] mode={self.relay_mode} relay_pin={physical_pin} "
+                f"raw_state={raw_state_str} interpreted_power={interpreted_power_str}"
             )
 
             return
@@ -337,7 +354,7 @@ class ArduinoEmulator:
         # ----------------------------------------------------
 
         print(
-            "[COMMAND] UNKNOWN"
+            f"[COMMAND] UNKNOWN payload={bytes_to_hex(payload)}"
         )
 
     # ========================================================
@@ -377,7 +394,12 @@ class ArduinoEmulator:
         relay_pin: int,
     ) -> bool:
 
-        return self.get_output_state(relay_pin)
+        raw_state = self.get_output_state(relay_pin)
+        
+        if self.relay_mode == "normally_closed":
+            return not raw_state
+            
+        return raw_state
 
     # ========================================================
     # GPIO SENSOR API

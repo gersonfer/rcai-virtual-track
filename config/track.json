@@ -6,6 +6,8 @@
     "baudrate": 115200
   },
 
+  "relay_mode": "normally_closed",
+
   "lanes": [
     {
       "lane_id": 1,

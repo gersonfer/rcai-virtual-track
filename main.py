@@ -55,6 +55,7 @@ emulator = ArduinoEmulator(
     port=track_config["serial"]["port"],
     baudrate=track_config["serial"]["baudrate"],
     lanes_config=track_config.get("lanes", []),
+    relay_mode=track_config.get("relay_mode", "normally_open"),
 )
 
 # ============================================================
