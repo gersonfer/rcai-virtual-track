@@ -19,6 +19,7 @@
 
       "behavior": {
         "aggression": 0.70,
+        "reaction_time": 0.20,
         "deslot_probability": 0.010,
         "recovery_time_avg": 2.0
       },
@@ -54,6 +55,7 @@
 
       "behavior": {
         "aggression": 0.82,
+        "reaction_time": 0.25,
         "deslot_probability": 0.020,
         "recovery_time_avg": 2.5
       },
@@ -89,6 +91,7 @@
 
       "behavior": {
         "aggression": 0.60,
+        "reaction_time": 0.22,
         "deslot_probability": 0.008,
         "recovery_time_avg": 1.8
       },
@@ -124,6 +127,7 @@
 
       "behavior": {
         "aggression": 0.60,
+        "reaction_time": 0.30,
         "deslot_probability": 0.015,
         "recovery_time_avg": 1.8,
         "drift_factor": 0.12

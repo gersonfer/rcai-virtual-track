@@ -164,6 +164,8 @@ class RaceRuntime:
 
                 continue
 
+            was_stopped = (current_state == VehicleState.STOPPED or current_state is None)
+
             if current_state != VehicleState.POWERED:
                 print(f"[LANE {lane_id}] STATE -> POWERED")
                 current_state = VehicleState.POWERED
@@ -188,6 +190,12 @@ class RaceRuntime:
                 is_resumed_lap = True
                 resumed_original_time = original_time
                 
+                if was_stopped:
+                    reaction = driver.generate_reaction_time()
+                    lap_time += reaction
+                    resumed_original_time += reaction
+                    print(f"[LANE {lane_id}] Reaction Time Applied: {reaction:.3f}s")
+                
                 pending_lap = None
             else:
                 is_resumed_lap = False
@@ -196,6 +204,11 @@ class RaceRuntime:
                 deslotted = result.deslotted
                 recovery = result.recovery_time
                 car_name = profile["name"]
+                
+                if was_stopped:
+                    reaction = driver.generate_reaction_time()
+                    lap_time += reaction
+                    print(f"[LANE {lane_id}] Reaction Time Applied: {reaction:.3f}s")
 
                 # ------------------------------------------------
                 # DESLOT LOGGING (IMMEDIATE)

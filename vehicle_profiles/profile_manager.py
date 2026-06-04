@@ -189,6 +189,7 @@ class ProfileManager:
             aggression=beh.get("aggression", 1.0),
             deslot_probability=beh["deslot_probability"],
             recovery_time=beh["recovery_time_avg"],
+            reaction_time=beh.get("reaction_time", 0.250),
         )
 
     # ========================================================

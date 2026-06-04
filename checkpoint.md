@@ -69,6 +69,20 @@ Behavior validated:
 - `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
 - Functionality preserved with no behavioral regressions.
 
+## Phase 4 — Driver Behavior
+
+### TASK-011 — Starting Model
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `reaction_time` added to profiles under `behavior`.
+- `DriverModel.generate_reaction_time()` applies deterministic random variance to the profile baseline.
+- `RaceRuntime` detects when the vehicle transitions from `STOPPED` (or starts the session).
+- Adds `reaction_time` to both the active lap wait loop and the final published telemetry log.
+- Correctly applies penalty to both grid starts and resumes from power loss.
+
 ### TASK-010 — Partial Lap Persistence
 
 Status: Completed

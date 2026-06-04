@@ -15,3 +15,4 @@ class DriverParameters:
     
     deslot_probability: float
     recovery_time: float
+    reaction_time: float

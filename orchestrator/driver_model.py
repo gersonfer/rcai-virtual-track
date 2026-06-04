@@ -86,6 +86,20 @@ class DriverModel:
             recovery_time=recovery_time,
         )
 
+    # ========================================================
+
+    def generate_reaction_time(self) -> float:
+
+        if not self.params:
+            return 0.25
+
+        reaction_time = self.params.reaction_time
+
+        return random.uniform(
+            reaction_time * 0.9,
+            reaction_time * 1.5,
+        )
+
 # ============================================================
 # DEBUG
 # ============================================================
