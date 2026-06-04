@@ -186,23 +186,51 @@ class RaceRuntime:
             car_name = profile["name"]
 
             # ------------------------------------------------
-            # WAIT LAP TIME (INTERRUPTIBLE)
+            # WAIT LAP TIME (INTERRUPTIBLE / COASTING)
             # ------------------------------------------------
 
             start_time = time.monotonic()
-            power_lost = False
+            coasting_duration = self.track_config.get("coasting_duration", 0.5)
+            lap_aborted = False
 
             while time.monotonic() - start_time < lap_time:
                 
                 time.sleep(0.05)
                 
                 if not self.emulator.is_lane_powered(relay_pin):
-                    power_lost = True
-                    break
+                    
+                    if current_state != VehicleState.COASTING:
+                        print(f"[LANE {lane_id}] STATE -> COASTING (Power Lost)")
+                        current_state = VehicleState.COASTING
+                        
+                    coasting_start = time.monotonic()
+                    
+                    while True:
+                        elapsed_coasting = time.monotonic() - coasting_start
+                        elapsed_lap = time.monotonic() - start_time
+                        
+                        if elapsed_lap >= lap_time:
+                            # Momentum carried vehicle over the finish line
+                            break
+                            
+                        if elapsed_coasting >= coasting_duration:
+                            # Ran out of momentum
+                            lap_aborted = True
+                            break
+                            
+                        if self.emulator.is_lane_powered(relay_pin):
+                            print(f"[LANE {lane_id}] STATE -> POWERED (Power Restored)")
+                            current_state = VehicleState.POWERED
+                            break
+                            
+                        time.sleep(0.05)
+                        
+                    if lap_aborted:
+                        break
 
-            if power_lost:
+            if lap_aborted:
                 if current_state != VehicleState.STOPPED:
-                    print(f"[LANE {lane_id}] STATE -> STOPPED (Power Lost)")
+                    print(f"[LANE {lane_id}] STATE -> STOPPED (Momentum Lost)")
                     current_state = VehicleState.STOPPED
                 continue
 

@@ -58,6 +58,29 @@ Behavior validated:
 - Single instance per lane successfully persists across laps without being recreated.
 - Existing lap generation functionality completely preserved.
 
+### TASK-006 — DriverModel
+
+Status: Completed
+Homologation: Approved
+
+Behavior validated:
+- `LapGenerator` component created in `orchestrator/lap_generator.py`.
+- Driver behavior and lap calculation logic successfully separated.
+- `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
+- Functionality preserved with no behavioral regressions.
+
+### TASK-009 — Coasting
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `COASTING` state added to `VehicleState`.
+- `coasting_duration` successfully externalized to `track.json`.
+- Loss of track power places vehicles into the `COASTING` state.
+- Time-based model perfectly handles "carry-over" lap finishes if momentum is sufficient.
+- Insufficient momentum correctly transitions to `STOPPED` and discards the lap.
+
 ### TASK-007 — ProfileManager Helpers
 
 Status: Completed
@@ -79,14 +102,5 @@ Behavior validated:
 - Power loss correctly triggers an immediate `STATE -> STOPPED` transition mid-lap.
 - Laps interrupted by power loss are completely discarded (no trailing sensor pulse).
 
-### TASK-006 — DriverModel
 
-Status: Completed
-Homologation: Approved
-
-Behavior validated:
-- `LapGenerator` component created in `orchestrator/lap_generator.py`.
-- Driver behavior and lap calculation logic successfully separated.
-- `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
-- Functionality preserved with no behavioral regressions.
 

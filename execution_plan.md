@@ -158,29 +158,40 @@ Acceptance Criteria
 
 ### [ ] TASK-009 — Coasting
 
-Depends On
+Scope:
+- Introduce the `COASTING` state.
+- `POWERED` -> `COASTING` when power is lost.
+- `COASTING` -> `STOPPED` when coasting duration expires.
+- `COASTING` -> `POWERED` if power returns before coasting expires.
+- Allow a lap to complete during coasting if the remaining lap time is less than or equal to the configured coasting duration.
+- Abort the lap if the remaining lap time exceeds the coasting duration.
+- No persistence of partial lap progress.
+- No resume of interrupted laps.
+- Existing TASK-008 behavior remains unchanged once the vehicle reaches `STOPPED`.
 
-- TASK-007
+Acceptance Criteria:
+- Vehicles may finish a lap during coasting.
+- Vehicles may fail to finish a lap during coasting.
+- Power loss immediately transitions into `COASTING`.
+- Once coasting expires, the vehicle reaches `STOPPED`.
+- No lap progress is preserved after `STOPPED`.
 
-Problem
+---
 
-Vehicle should not instantly stop when power disappears.
+### [ ] TASK-010 — Partial Lap Persistence
 
-Expected
-
-text POWERED ↓ Relay OFF ↓ COASTING ↓ STOPPED 
-
-Acceptance Criteria
-
-- Coasting state implemented.
-- Behavior deterministic.
-- Reproducible during testing.
+Scope:
+- Persist interrupted lap progress.
+- Store elapsed lap progress when a vehicle stops.
+- Resume remaining lap time when power returns.
+- Define interaction with pause/resume cycles.
+- Define interaction with future fatigue and deslot systems.
 
 ---
 
 ## Phase 4 — Driver Behavior
 
-### [ ] TASK-010 — Starting Model
+### [ ] TASK-011 — Starting Model
 
 Problem
 
