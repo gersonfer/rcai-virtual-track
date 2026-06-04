@@ -234,7 +234,7 @@ Acceptance Criteria
 
 ## Phase 5 — Physics Layer
 
-### [ ] TASK-011 — Vehicle Physics Model
+### [ ] TASK-012 — Vehicle Physics Model
 
 Introduce:
 
@@ -253,7 +253,7 @@ Acceptance Criteria
 
 ---
 
-### [ ] TASK-012 — Acceleration Model
+### [ ] TASK-013 — Acceleration Model
 
 Depends On
 
@@ -272,7 +272,7 @@ Acceptance Criteria
 
 ## Phase 6 — Runtime Refactor
 
-### [ ] TASK-013 — Replace Long Blocking Sleeps
+### [ ] TASK-014 — Replace Long Blocking Sleeps
 
 Problem
 
@@ -290,7 +290,7 @@ Acceptance Criteria
 
 ---
 
-### [ ] TASK-014 — Event-Driven Vehicle Simulation
+### [ ] TASK-015 — Event-Driven Vehicle Simulation
 
 Final Objective
 

@@ -100,6 +100,7 @@ class RaceRuntime:
         current_state = None
 
         driver = DriverModel()
+        pending_lap = None
 
         while self.running:
 
@@ -168,22 +169,48 @@ class RaceRuntime:
                 current_state = VehicleState.POWERED
 
             # ------------------------------------------------
-            # GENERATE LAP
+            # GENERATE OR RESUME LAP
             # ------------------------------------------------
 
-            result = (
-                driver.generate_lap()
-            )
+            if pending_lap is not None:
+                lap_time = pending_lap["lap_time"]
+                original_time = pending_lap.get("original_time", lap_time)
+                car_name = profile["name"]
+                
+                print(
+                    f"[PARTIAL LAP RESUME]\n"
+                    f"lane={lane_id}\n"
+                    f"original={original_time:.3f}\n"
+                    f"remaining={lap_time:.3f}"
+                )
+                
+                # Flag to know if this lap was resumed so we can log PARTIAL LAP COMPLETE
+                is_resumed_lap = True
+                resumed_original_time = original_time
+                
+                pending_lap = None
+            else:
+                is_resumed_lap = False
+                result = driver.generate_lap()
+                lap_time = result.lap_time
+                deslotted = result.deslotted
+                recovery = result.recovery_time
+                car_name = profile["name"]
 
-            lap_time = result.lap_time
+                # ------------------------------------------------
+                # DESLOT LOGGING (IMMEDIATE)
+                # ------------------------------------------------
+                if deslotted:
+                    if current_state != VehicleState.DESLOTTED:
+                        print(f"[LANE {lane_id}] STATE -> DESLOTTED")
+                        current_state = VehicleState.DESLOTTED
 
-            deslotted = result.deslotted
-
-            recovery = (
-                result.recovery_time
-            )
-
-            car_name = profile["name"]
+                    print(
+                        f"[LANE {lane_id}] "
+                        f"{car_name} "
+                        f"DESLOT "
+                        f"(recovery={recovery:.2f}s)"
+                    )
 
             # ------------------------------------------------
             # WAIT LAP TIME (INTERRUPTIBLE / COASTING)
@@ -229,6 +256,25 @@ class RaceRuntime:
                             # Ran out of momentum
                             print("[COASTING RESULT] MOMENTUM_LOST")
                             lap_aborted = True
+                            
+                            # Persist partial lap
+                            remaining_time = lap_time - elapsed_lap
+                            if remaining_time > 0:
+                                
+                                # Track original time for telemetry
+                                original = pending_lap["original_time"] if (pending_lap and "original_time" in pending_lap) else lap_time
+                                
+                                pending_lap = {
+                                    "lap_time": remaining_time,
+                                    "original_time": original
+                                }
+                                
+                                print(
+                                    f"[PARTIAL LAP SAVE]\n"
+                                    f"lane={lane_id}\n"
+                                    f"original={original:.3f}\n"
+                                    f"remaining={remaining_time:.3f}"
+                                )
                             break
                             
                         if self.emulator.is_lane_powered(relay_pin):
@@ -248,31 +294,24 @@ class RaceRuntime:
                 continue
 
             # ------------------------------------------------
-            # DESLOT
-            # ------------------------------------------------
-
-            if deslotted:
-
-                if current_state != VehicleState.DESLOTTED:
-                    print(f"[LANE {lane_id}] STATE -> DESLOTTED")
-                    current_state = VehicleState.DESLOTTED
-
-                print(
-                    f"[LANE {lane_id}] "
-                    f"{car_name} "
-                    f"DESLOT "
-                    f"(recovery={recovery:.2f}s)"
-                )
-
-            # ------------------------------------------------
             # SENSOR EVENT
             # ------------------------------------------------
+
+            final_logged_time = resumed_original_time if is_resumed_lap else lap_time
+
+            if is_resumed_lap:
+                print(
+                    f"[PARTIAL LAP COMPLETE]\n"
+                    f"lane={lane_id}\n"
+                    f"original={resumed_original_time:.3f}\n"
+                    f"published={final_logged_time:.3f}"
+                )
 
             print(
                 f"[LANE {lane_id}] "
                 f"LAP "
                 f"{car_name} "
-                f"{lap_time:.3f}s"
+                f"{final_logged_time:.3f}s"
             )
 
             self.emulator.pulse_sensor(

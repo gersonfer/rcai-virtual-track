@@ -69,6 +69,17 @@ Behavior validated:
 - `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
 - Functionality preserved with no behavioral regressions.
 
+### TASK-010 — Partial Lap Persistence
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- Added `pending_lap` dictionary to `lane_loop`.
+- System tracks `remaining_time = lap_time - elapsed_lap` upon `MOMENTUM_LOST`.
+- Skips generating a new lap if `pending_lap` is present, resuming exactly where it left off.
+- Deslot penalties intrinsically preserved during multiple pause/resume cycles.
+
 ### TASK-009 — Coasting
 
 Status: Completed
@@ -90,6 +101,15 @@ Behavior validated:
 - `[COASTING]` decision block outputs exact values.
 - `[COASTING RESULT]` strictly logs `LAP_COMPLETED` or `MOMENTUM_LOST`.
 - Background noise (heartbeats, repetitive relay states) eliminated from terminal output.
+
+### TASK-009.2 — Improve Event Visibility
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `DESLOT` log moved to immediately follow lap generation.
+- Deslot events are fully visible even if the lap is subsequently aborted.
 
 ### TASK-007 — ProfileManager Helpers
 
