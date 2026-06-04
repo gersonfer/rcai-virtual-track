@@ -3,6 +3,8 @@
 import random
 from dataclasses import dataclass
 
+from orchestrator.lap_generator import LapGenerator
+
 # ============================================================
 # LAP RESULT
 # ============================================================
@@ -27,6 +29,7 @@ class DriverModel:
         self.profile = None
         self.performance = None
         self.behavior = None
+        self.lap_generator = LapGenerator()
 
     def set_profile(
         self,
@@ -71,17 +74,11 @@ class DriverModel:
         # BASE LAP GENERATION
         # ----------------------------------------------------
 
-        lap_time = random.gauss(
-            avg_lap,
-            variation,
-        )
-
-        lap_time = max(
-            min_lap,
-            min(
-                lap_time,
-                max_lap,
-            ),
+        lap_time = self.lap_generator.generate_base_time(
+            avg_lap=avg_lap,
+            variation=variation,
+            min_lap=min_lap,
+            max_lap=max_lap,
         )
 
         # ----------------------------------------------------
@@ -146,3 +143,4 @@ if __name__ == "__main__":
             f"deslot={result.deslotted} | "
             f"recovery={result.recovery_time:.2f}s"
         )
+

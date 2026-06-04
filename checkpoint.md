@@ -39,6 +39,36 @@ Not implemented.
 
 Future task required.
 
+### TASK-004 — VehicleState
+
+Status: Completed
+Homologation: Approved
+
+Behavior validated:
+- VehicleState abstraction created.
+- Race runtime explicitly tracks states (STOPPED, POWERED, DESLOTTED) avoiding log spam.
+
+### TASK-005 — Persistent Driver Model
+
+Status: Completed
+Homologation: Approved
+
+Behavior validated:
+- Persistent `DriverModel` introduced.
+- Single instance per lane successfully persists across laps without being recreated.
+- Existing lap generation functionality completely preserved.
+
+### TASK-006 — DriverModel
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `LapGenerator` component created in `orchestrator/lap_generator.py`.
+- Driver behavior and lap calculation logic successfully separated.
+- `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
+- Functionality preserved with no behavioral regressions.
+
 ### TASK-003.1 — Remove Hardcoded Serial Configuration
 
 ## Objective
@@ -90,185 +120,3 @@ No Python files need to be modified. You will see [EMULATOR] Starting on /dev/pt
 Status: Completed
 Homologation: Approved
 
-### TASK-004 — Introduce VehicleState
-Status: Completed
-Homologation: Pending Approval
-
-Files modified:
-- `orchestrator/vehicle_state.py` (Created)
-
-Architectural decisions:
-- Introduced `VehicleState` Enum (`STOPPED`, `POWERED`, `DESLOTTED`) in a dedicated file `orchestrator/vehicle_state.py`.
-- Intentionally kept `RaceRuntime` and `LapGenerator` unmodified for this step to strictly adhere to the rule of keeping implementation minimal and preserving TASK-003 homologated behavior. The structure is now prepared to be integrated in future tasks.
-
-Validation steps executed:
-- Confirmed that by creating a new standalone module without changing `race_runtime.py` or `lap_generator.py`, the existing runtime compiles successfully and homologation behavior from TASK-003 remains functionally identical. 
-- Relay ON still generates laps, and Relay OFF still blocks new lap generation.
-
-## Next Task
-
-### TASK-004.1 — Runtime Logging Cleanup
-Status: Completed
-Homologation: Pending Approval
-
-Files modified:
-- `orchestrator/race_runtime.py`
-
-Architectural decisions:
-- Introduced a local `current_state` variable in the `lane_loop` to track transitions using the `VehicleState` enum.
-- Replaced the repetitive `POWER OFF` log with event-oriented logs (`STATE -> STOPPED`, `STATE -> POWERED`, `STATE -> DESLOTTED`) that only trigger on transitions.
-- Kept the detection local to the loop without creating any new managers or state machines.
-- Retained the existing relay and lap logic unmodified.
-
-Validation steps executed:
-- Confirmed that starting the runtime with relays OFF outputs a single `STATE -> STOPPED` message per lane.
-- Confirmed that toggling the relay ON outputs a single `STATE -> POWERED` message per lane.
-- Confirmed that deslotting outputs a single `STATE -> DESLOTTED` message per lane.
-
-## Next Task
-
-### TASK-005 — Persistent Driver Model
-Status: Completed
-Homologation: Pending Approval
-
-Files modified:
-- `orchestrator/lap_generator.py` (renamed to `orchestrator/driver_model.py`)
-- `orchestrator/driver_model.py` (refactored `LapGenerator` to `DriverModel` and added `set_profile`)
-- `orchestrator/race_runtime.py`
-
-Architectural decisions:
-- Transformed the transient `LapGenerator` into a persistent `DriverModel` object.
-- Created a single `DriverModel` instance per lane before the `while self.running:` loop.
-- The runtime dynamically injects the lane's profile into the `DriverModel` using `set_profile` on every iteration, instead of reconstructing the object.
-- Existing behaviors remain unmodified.
-
-Validation steps executed:
-- Confirmed that the runtime compiles successfully with the renamed module and refactored class.
-- Confirmed that lap generation output is functionally identical to previous tasks.
-- Confirmed that `driver.generate_lap()` runs seamlessly with dynamic profile assignment.
-
-## Next Task
-
-### TASK-004.2 — Configurable Serial Debug Logging
-Status: Completed
-Homologation: Pending Approval
-
-Files modified:
-- `track_interface/arduino_emulator.py`
-
-Architectural decisions:
-- Introduced a `DEBUG_SERIAL = False` flag in `arduino_emulator.py`.
-- Wrapped the highly verbose `[TX]`, `[RX]`, `[RX COMMAND]`, and `[COMMAND RAW]` logs in a conditional check against `DEBUG_SERIAL`.
-- Did not change any protocol behavior, runtime timing, or execution logic.
-- Kept other diagnostic logs (LAP, STATE, DESLOT, OUTPUT) unmodified.
-
-Validation steps executed:
-- Confirmed that setting `DEBUG_SERIAL = False` suppresses the raw byte streams and command logs, leaving only event-oriented behavior logs.
-- Confirmed that setting `DEBUG_SERIAL = True` restores all original verbose RX/TX messages.
-- Confirmed no lap generation or race execution flow was altered.
-
-## Next Task
-
-### TASK-005.2 — GAP-001 Validation
-Status: Completed
-Homologation: Pending Approval
-
-Files modified:
-- `track_interface/arduino_emulator.py`
-
-Changes:
-- Added `DEBUG_GAP001 = True` config flag.
-- Added `_last_time_reset_ts` instance variable to track when the last T; was received.
-- Modified `heartbeat_loop` to snapshot `reset_flag` before clearing it, then log heartbeat timing and `reset_flag` value relative to last T; reception.
-- Modified `handle_command` (TIME_RESET branch) to record the reception timestamp and log at +0 ms.
-
-Expected log output (hypothesis: CONFIRMED gap):
-```
-[GAP001] T; received at +0 ms (reset_flag currently=0)
-[GAP001] HEARTBEAT sent +487.3ms after T; reset_flag=1
-[GAP001] HEARTBEAT sent +986.5ms after T; reset_flag=0
-```
-
-Expected log output (hypothesis: gap NOT present):
-```
-[GAP001] T; received at +0 ms (reset_flag currently=0)
-[GAP001] HEARTBEAT sent +11.2ms after T; reset_flag=1
-```
-
-No behavior changes were made. This is instrumentation only.
-
-## Next Task
-
-### TASK-006 — Dynamic Pin Mapping Fix
-Status: Executed
-Result: Failed Homologation
-Evidence:
-- PI recognized
-- PO recognized
-- Dynamic mapping active
-- INPUT events still do not generate laps inside RC AI
-
-Conclusion:
-GAP-A is not the root cause of the missing lap problem.
-
-Files modified:
-- `track_interface/serial_protocol.py`
-- `track_interface/arduino_emulator.py`
-- `main.py`
-
-Protocol behavior implemented:
-- Parsed the `PI` and `PO` commands from RC AI to extract protocol pin indices.
-- Modified `ArduinoEmulator` to receive `lanes_config` and dynamically map physical sensor and relay pins to protocol indices based on list position.
-- Translated physical pins to protocol indices before sending `INPUT` messages (lap sensors).
-- Translated protocol indices to physical pins when receiving `OD` commands (relay output).
-- Broadcasted initial `HIGH` state for all configured input pins after `PI` is processed.
-- Ensured GAP-001 instrumentation remained untouched.
-- Added concise logs for `[PIN MAP]`.
-
-Mapping strategy:
-- `input_pin_map`: Maps physical sensor pins to protocol indices.
-- `output_pin_map`: Maps protocol indices to physical relay pins.
-- Falls back to physical pins if no mapping is found (preserving standalone mode).
-
-## Next Task
-
-### TASK-006.1 — Protocol Differential Analysis
-Status: Executed
-Result: Completed (No Code Changes)
-
-Produced `docs/protocol_differential_analysis.md` identifying two critical temporal hypotheses (GAP-B and GAP-001 Sync Delay) responsible for missing laps.
-
-## Next Task
-
-### TASK-006.2 — GAP-B Validation Instrumentation
-Status: Completed
-Homologation: Ready for Homologation
-
-Files modified:
-- `track_interface/arduino_emulator.py`
-- `docs/gap_b_validation_plan.md` (Created)
-
-Changes:
-- Added `_flush_heartbeat()` method to `ArduinoEmulator`.
-- Called `_flush_heartbeat()` immediately before transmitting `INPUT` messages in `sensor_on()` and `sensor_off()`.
-- Added diagnostic log `[GAP-B] HEARTBEAT FLUSH BEFORE INPUT`.
-- Maintained all existing race behaviors, pin mappings, and async heartbeat loops.
-
-Please perform the homologation according to `docs/gap_b_validation_plan.md`.
-
-## Next Task
-
-### TASK-006.3 — Identify Unknown Commands During Startup Handshake
-Status: Executed
-Result: Completed (Instrumentation only)
-
-Produced `docs/unknown_command_analysis.md` identifying the two unknown commands:
-1. Analog Read Pin Mode (`p`, `0x70`)
-2. Debounce Config (`d`, `0x64`)
-
-Files modified:
-- `track_interface/arduino_emulator.py` (Instrumented UNKNOWN command branch to output raw payload)
-- `docs/unknown_command_analysis.md` (Created)
-
-Conclusion:
-These commands are benign and do not require a response from the emulator. It is safe to ignore them.
