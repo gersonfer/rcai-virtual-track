@@ -203,6 +203,17 @@ class RaceRuntime:
                         print(f"[LANE {lane_id}] STATE -> COASTING (Power Lost)")
                         current_state = VehicleState.COASTING
                         
+                        elapsed = time.monotonic() - start_time
+                        remaining = lap_time - elapsed
+                        print(
+                            f"[COASTING]\n"
+                            f"lane={lane_id}\n"
+                            f"lap_time={lap_time:.3f}\n"
+                            f"elapsed={elapsed:.3f}\n"
+                            f"remaining={remaining:.3f}\n"
+                            f"coasting_duration={coasting_duration:.3f}"
+                        )
+                        
                     coasting_start = time.monotonic()
                     
                     while True:
@@ -211,10 +222,12 @@ class RaceRuntime:
                         
                         if elapsed_lap >= lap_time:
                             # Momentum carried vehicle over the finish line
+                            print("[COASTING RESULT] LAP_COMPLETED")
                             break
                             
                         if elapsed_coasting >= coasting_duration:
                             # Ran out of momentum
+                            print("[COASTING RESULT] MOMENTUM_LOST")
                             lap_aborted = True
                             break
                             

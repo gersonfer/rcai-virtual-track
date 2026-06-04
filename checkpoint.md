@@ -81,6 +81,16 @@ Behavior validated:
 - Time-based model perfectly handles "carry-over" lap finishes if momentum is sufficient.
 - Insufficient momentum correctly transitions to `STOPPED` and discards the lap.
 
+### TASK-009.1 — Coasting Instrumentation & Log Cleanup
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `[COASTING]` decision block outputs exact values.
+- `[COASTING RESULT]` strictly logs `LAP_COMPLETED` or `MOMENTUM_LOST`.
+- Background noise (heartbeats, repetitive relay states) eliminated from terminal output.
+
 ### TASK-007 — ProfileManager Helpers
 
 Status: Completed

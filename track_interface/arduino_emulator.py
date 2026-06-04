@@ -139,18 +139,20 @@ class ArduinoEmulator:
             # GAP-001 instrumentation
             if DEBUG_GAP001:
                 if self._last_time_reset_ts is not None:
-                    elapsed_ms = (now - self._last_time_reset_ts) * 1000
-                    print(
-                        f"[GAP001] HEARTBEAT sent "
-                        f"+{elapsed_ms:.1f}ms after T; "
-                        f"reset_flag={current_reset_flag}"
-                    )
+                    # elapsed_ms = (now - self._last_time_reset_ts) * 1000
+                    # print(
+                    #     f"[GAP001] HEARTBEAT sent "
+                    #     f"+{elapsed_ms:.1f}ms after T; "
+                    #     f"reset_flag={current_reset_flag}"
+                    # )
+                    pass
                 else:
-                    print(
-                        f"[GAP001] HEARTBEAT sent "
-                        f"(no T; received yet) "
-                        f"reset_flag={current_reset_flag}"
-                    )
+                    # print(
+                    #     f"[GAP001] HEARTBEAT sent "
+                    #     f"(no T; received yet) "
+                    #     f"reset_flag={current_reset_flag}"
+                    # )
+                    pass
 
             self.reset_flag = 0
 
@@ -339,15 +341,15 @@ class ArduinoEmulator:
             raw_state_str = "HIGH" if state else "LOW"
             interpreted_power_str = "ON" if interpreted_power else "OFF"
             
-            print(
-                f"[OUTPUT] PIN {physical_pin} "
-                f"(proto D{proto_pin}) -> {raw_state_str}"
-            )
+            # print(
+            #     f"[OUTPUT] PIN {physical_pin} "
+            #     f"(proto D{proto_pin}) -> {raw_state_str}"
+            # )
             
-            print(
-                f"[RELAYLOGIC] mode={self.relay_mode} relay_pin={physical_pin} "
-                f"raw_state={raw_state_str} interpreted_power={interpreted_power_str}"
-            )
+            # print(
+            #     f"[RELAYLOGIC] mode={self.relay_mode} relay_pin={physical_pin} "
+            #     f"raw_state={raw_state_str} interpreted_power={interpreted_power_str}"
+            # )
 
             return
 
@@ -414,13 +416,14 @@ class ArduinoEmulator:
         
         msg = build_heartbeat(
             delta_us=delta_us,
-            reset_flag=current_reset_flag,
+            reset_flag=1,
         )
-        
+
         self.send(msg)
-        self.reset_flag = 0
-        
-        print("[GAP-B] HEARTBEAT FLUSH BEFORE INPUT")
+
+        if DEBUG_GAP001:
+            pass
+            # print("[GAP-B] HEARTBEAT FLUSH BEFORE INPUT")
 
     # ========================================================
 

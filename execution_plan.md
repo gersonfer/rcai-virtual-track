@@ -178,6 +178,16 @@ Acceptance Criteria:
 
 ---
 
+### [ ] TASK-009.1 — Coasting Instrumentation & Log Cleanup
+
+Scope:
+- Make coasting decisions observable.
+- Log lane, target time, elapsed time, remaining time, and coasting duration upon entering COASTING.
+- Log LAP_COMPLETED or MOMENTUM_LOST on exit.
+- Reduce unnecessary log noise (heartbeats, repetitive relay states, GPIO) without touching structural state logs.
+
+---
+
 ### [ ] TASK-010 — Partial Lap Persistence
 
 Scope:
