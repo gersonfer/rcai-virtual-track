@@ -10,7 +10,13 @@
 - Track power interpretation
 - Laps not being registered during Racing state
 
-### Homologation
-- First complete race successfully executed in RC AI
-- Laps displayed in race screen
-- Results screen populated correctly
+## Homologation
+
+- First complete RC AI race executed successfully.
+- Multi-heat execution validated.
+- Pause/Resume validated.
+- Race results generated correctly.
+- Best Lap, Average Lap and Median Lap calculated by RC AI.
+- Normally Closed relay logic validated.
+- VehicleState validated.
+- DriverModel/LapGenerator refactor validated.

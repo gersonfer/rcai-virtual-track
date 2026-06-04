@@ -167,6 +167,32 @@ class ProfileManager:
 
     # ========================================================
 
+    def get_driver_parameters(
+        self,
+        profile_id: str,
+    ):
+        from orchestrator.driver_parameters import DriverParameters
+
+        profile = self.require_profile(
+            profile_id
+        )
+
+        perf = profile["performance"]
+        beh = profile["behavior"]
+
+        return DriverParameters(
+            avg_lap=perf["avg_lap"],
+            variation=perf["variation"],
+            min_lap=perf["min_lap"],
+            max_lap=perf["max_lap"],
+            consistency=perf.get("consistency", 1.0),
+            aggression=beh.get("aggression", 1.0),
+            deslot_probability=beh["deslot_probability"],
+            recovery_time=beh["recovery_time_avg"],
+        )
+
+    # ========================================================
+
     def dump(self):
 
         print(

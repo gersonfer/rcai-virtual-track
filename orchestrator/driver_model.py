@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 
 from orchestrator.lap_generator import LapGenerator
+from orchestrator.driver_parameters import DriverParameters
 
 # ============================================================
 # LAP RESULT
@@ -26,49 +27,26 @@ class DriverModel:
 
     def __init__(self):
 
-        self.profile = None
-        self.performance = None
-        self.behavior = None
+        self.params: DriverParameters = None
         self.lap_generator = LapGenerator()
 
-    def set_profile(
+    def set_parameters(
         self,
-        profile: dict,
+        params: DriverParameters,
     ):
 
-        self.profile = profile
-
-        self.performance = profile["performance"]
-
-        self.behavior = profile["behavior"]
+        self.params = params
 
     # ========================================================
 
     def generate_lap(self) -> LapResult:
 
-        avg_lap = self.performance[
-            "avg_lap"
-        ]
-
-        variation = self.performance[
-            "variation"
-        ]
-
-        min_lap = self.performance[
-            "min_lap"
-        ]
-
-        max_lap = self.performance[
-            "max_lap"
-        ]
-
-        deslot_probability = self.behavior[
-            "deslot_probability"
-        ]
-
-        recovery_time_avg = self.behavior[
-            "recovery_time_avg"
-        ]
+        avg_lap = self.params.avg_lap
+        variation = self.params.variation
+        min_lap = self.params.min_lap
+        max_lap = self.params.max_lap
+        deslot_probability = self.params.deslot_probability
+        recovery_time_avg = self.params.recovery_time
 
         # ----------------------------------------------------
         # BASE LAP GENERATION
@@ -114,24 +92,19 @@ class DriverModel:
 
 if __name__ == "__main__":
 
-    example_profile = {
-        "name": "Ferrari 499P",
-
-        "performance": {
-            "avg_lap": 4.2,
-            "variation": 0.12,
-            "min_lap": 4.0,
-            "max_lap": 4.8,
-        },
-
-        "behavior": {
-            "deslot_probability": 0.03,
-            "recovery_time_avg": 2.0,
-        },
-    }
+    example_params = DriverParameters(
+        avg_lap=4.2,
+        variation=0.12,
+        min_lap=4.0,
+        max_lap=4.8,
+        consistency=0.93,
+        aggression=0.70,
+        deslot_probability=0.03,
+        recovery_time=2.0,
+    )
 
     driver = DriverModel()
-    driver.set_profile(example_profile)
+    driver.set_parameters(example_params)
 
     for i in range(20):
 

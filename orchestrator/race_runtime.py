@@ -128,14 +128,7 @@ class RaceRuntime:
             # LOAD PROFILE
             # ------------------------------------------------
 
-            profile = (
-                self.profile_manager
-                .get_profile(
-                    profile_id
-                )
-            )
-
-            if profile is None:
+            if not self.profile_manager.exists(profile_id):
 
                 print(
                     f"[LANE {lane_id}] "
@@ -146,8 +139,11 @@ class RaceRuntime:
                 time.sleep(1)
 
                 continue
+            
+            profile = self.profile_manager.get_profile(profile_id)
+            params = self.profile_manager.get_driver_parameters(profile_id)
 
-            driver.set_profile(profile)
+            driver.set_parameters(params)
 
             # ------------------------------------------------
             # CHECK RELAY POWER
@@ -190,10 +186,25 @@ class RaceRuntime:
             car_name = profile["name"]
 
             # ------------------------------------------------
-            # WAIT LAP TIME
+            # WAIT LAP TIME (INTERRUPTIBLE)
             # ------------------------------------------------
 
-            time.sleep(lap_time)
+            start_time = time.monotonic()
+            power_lost = False
+
+            while time.monotonic() - start_time < lap_time:
+                
+                time.sleep(0.05)
+                
+                if not self.emulator.is_lane_powered(relay_pin):
+                    power_lost = True
+                    break
+
+            if power_lost:
+                if current_state != VehicleState.STOPPED:
+                    print(f"[LANE {lane_id}] STATE -> STOPPED (Power Lost)")
+                    current_state = VehicleState.STOPPED
+                continue
 
             # ------------------------------------------------
             # DESLOT
