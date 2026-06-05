@@ -69,12 +69,25 @@ Behavior validated:
 - `DriverModel` delegates statistical calculations to `LapGenerator`, while retaining behavioral decision ownership (e.g., deslotting).
 - Functionality preserved with no behavioral regressions.
 
+## Phase 5 — Physics Layer
+
+### TASK-012 — Vehicle Physics Model
+
+Status: Completed
+Homologation: Pending Approval
+
+Behavior validated:
+- `physics` block added to all vehicle profiles containing `scale`, `mass_grams`, `magnet_downforce_grams`, `grip_multiplier`, and `rear_tire_diameter_mm`.
+- `VehiclePhysics` frozen dataclass created.
+- `ProfileManager.get_vehicle_physics()` successfully parses the new parameters.
+- No runtime behavior changes introduced (as requested).
+
 ## Phase 4 — Driver Behavior
 
 ### TASK-011 — Starting Model
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - `reaction_time` added to profiles under `behavior`.
@@ -86,7 +99,7 @@ Behavior validated:
 ### TASK-010 — Partial Lap Persistence
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - Added `pending_lap` dictionary to `lane_loop`.
@@ -97,7 +110,7 @@ Behavior validated:
 ### TASK-009 — Coasting
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - `COASTING` state added to `VehicleState`.
@@ -109,7 +122,7 @@ Behavior validated:
 ### TASK-009.1 — Coasting Instrumentation & Log Cleanup
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - `[COASTING]` decision block outputs exact values.
@@ -119,7 +132,7 @@ Behavior validated:
 ### TASK-009.2 — Improve Event Visibility
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - `DESLOT` log moved to immediately follow lap generation.
@@ -128,7 +141,7 @@ Behavior validated:
 ### TASK-007 — ProfileManager Helpers
 
 Status: Completed
-Homologation: Pending Approval
+Homologation: Approved
 
 Behavior validated:
 - Added `DriverParameters` dataclass to orchestrator.

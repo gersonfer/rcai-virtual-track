@@ -7,3 +7,4 @@ tmp/
 dist/
 build/
 .DS_Store
+docs/

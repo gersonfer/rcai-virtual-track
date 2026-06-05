@@ -194,6 +194,28 @@ class ProfileManager:
 
     # ========================================================
 
+    def get_vehicle_physics(
+        self,
+        profile_id: str,
+    ):
+        from orchestrator.vehicle_physics import VehiclePhysics
+
+        profile = self.require_profile(
+            profile_id
+        )
+
+        phys = profile.get("physics", {})
+
+        return VehiclePhysics(
+            scale=phys.get("scale", "1/32"),
+            mass_grams=phys.get("mass_grams", 90.0),
+            magnet_downforce_grams=phys.get("magnet_downforce_grams", 100.0),
+            grip_multiplier=phys.get("grip_multiplier", 1.0),
+            rear_tire_diameter_mm=phys.get("rear_tire_diameter_mm", 21.0),
+        )
+
+    # ========================================================
+
     def dump(self):
 
         print(
@@ -226,6 +248,13 @@ class ProfileManager:
                 f"{profile['behavior']['deslot_probability']}"
             )
 
+            if "physics" in profile:
+                print(
+                    f"  Physics: "
+                    f"{profile['physics']['mass_grams']}g, "
+                    f"Scale {profile['physics']['scale']}"
+                )
+
             print()
 
         print(
@@ -257,4 +286,16 @@ if __name__ == "__main__":
             ferrari,
             indent=2,
         )
+    )
+
+    ferrari_physics = manager.get_vehicle_physics(
+        "ferrari_499p"
+    )
+
+    print(
+        "\nFERRARI PHYSICS\n"
+    )
+
+    print(
+        ferrari_physics
     )

@@ -17,6 +17,14 @@
         "cornering_factor": 0.96
       },
 
+      "physics": {
+        "scale": "1/32",
+        "mass_grams": 88.0,
+        "magnet_downforce_grams": 150.0,
+        "grip_multiplier": 1.00,
+        "rear_tire_diameter_mm": 21.0
+      },
+
       "behavior": {
         "aggression": 0.70,
         "reaction_time": 0.20,
@@ -51,6 +59,14 @@
 
         "top_speed_factor": 0.98,
         "cornering_factor": 0.94
+      },
+
+      "physics": {
+        "scale": "1/32",
+        "mass_grams": 92.0,
+        "magnet_downforce_grams": 140.0,
+        "grip_multiplier": 0.95,
+        "rear_tire_diameter_mm": 21.0
       },
 
       "behavior": {
@@ -89,6 +105,14 @@
         "cornering_factor": 0.97
       },
 
+      "physics": {
+        "scale": "1/32",
+        "mass_grams": 95.0,
+        "magnet_downforce_grams": 160.0,
+        "grip_multiplier": 1.05,
+        "rear_tire_diameter_mm": 21.0
+      },
+
       "behavior": {
         "aggression": 0.60,
         "reaction_time": 0.22,
@@ -123,6 +147,14 @@
 
         "top_speed_factor": 0.99,
         "cornering_factor": 0.97
+      },
+
+      "physics": {
+        "scale": "1/32",
+        "mass_grams": 90.0,
+        "magnet_downforce_grams": 150.0,
+        "grip_multiplier": 0.98,
+        "rear_tire_diameter_mm": 21.0
       },
 
       "behavior": {
