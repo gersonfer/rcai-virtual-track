@@ -77,22 +77,22 @@ emulator.start()
 
 lane_assignment.assign_profile(
     lane_id=1,
-    profile_id="ferrari_499p",
+    profile_id="test_light_highmag",
 )
 
 lane_assignment.assign_profile(
     lane_id=2,
-    profile_id="porsche_963",
+    profile_id="test_light_lowmag",
 )
 
 lane_assignment.assign_profile(
     lane_id=3,
-    profile_id="toyota_gr010",
+    profile_id="test_heavy_normmag",
 )
 
 lane_assignment.assign_profile(
     lane_id=4,
-    profile_id="cadillac_vseriesr",
+    profile_id="test_heavy_nomag",
 )
 
 # ============================================================
