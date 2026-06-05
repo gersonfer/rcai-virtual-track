@@ -146,6 +146,7 @@ class RaceRuntime:
             
             profile = self.profile_manager.get_profile(profile_id)
             params = self.profile_manager.get_driver_parameters(profile_id)
+            physics = self.profile_manager.get_vehicle_physics(profile_id)
 
             driver.set_parameters(params)
 
