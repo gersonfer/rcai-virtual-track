@@ -8,3 +8,7 @@ dist/
 build/
 .DS_Store
 docs/
+GLOBALS.md
+TODO.md
+checkpoint.md
+execution_plan.md

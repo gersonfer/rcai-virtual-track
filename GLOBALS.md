@@ -1,5 +1,0 @@
-- **Atomic Commits:** Every task must be implemented in a dedicated commit.
-- **Homologation:** Every task must have a manual homologation procedure.
-- **Progress Tracking:** Every task must update `checkpoint.md` before being considered complete.
-- **Explicit Approval:** After completing a task, you must halt and wait for explicit user approval before proceeding to any subsequent task or modification.
-- **Language Policy:** All source code and code comments must be written exclusively in English.
