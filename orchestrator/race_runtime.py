@@ -7,6 +7,7 @@ from orchestrator.driver_model import (
     DriverModel,
 )
 from orchestrator.physics_engine import PhysicsEngine
+from orchestrator.logger import safe_print as print
 
 # ============================================================
 # RACE RUNTIME
@@ -287,7 +288,11 @@ class RaceRuntime:
             # ------------------------------------------------
 
             start_time = time.monotonic()
-            coasting_duration = self.track_config.get("coasting_duration", 0.5)
+            
+            base_duration = self.track_config.get("coasting_duration", 0.5)
+            coasting_result = self.physics_engine.calculate_coasting_duration(physics, base_duration)
+            coasting_duration = coasting_result.coasting_duration
+            
             lap_aborted = False
 
             while time.monotonic() - start_time < lap_time:
@@ -302,6 +307,17 @@ class RaceRuntime:
                         
                         elapsed = time.monotonic() - start_time
                         remaining = lap_time - elapsed
+                        
+                        print(
+                            f"[COASTING PHYSICS]\n"
+                            f"lane={lane_id}\n"
+                            f"mass_grams={physics.mass_grams:.1f}\n"
+                            f"magnet_downforce_grams={physics.magnet_downforce_grams:.1f}\n"
+                            f"inertia_factor={coasting_result.inertia_factor:.3f}\n"
+                            f"magnetic_factor={coasting_result.magnetic_factor:.3f}\n"
+                            f"coasting_duration={coasting_duration:.3f}"
+                        )
+                        
                         print(
                             f"[COASTING]\n"
                             f"lane={lane_id}\n"

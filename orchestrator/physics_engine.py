@@ -22,6 +22,12 @@ class AccelerationResult:
     traction_limit: float
     torque_demand: float
 
+@dataclass
+class CoastingResult:
+    inertia_factor: float
+    magnetic_factor: float
+    coasting_duration: float
+
 # ============================================================
 # PHYSICS ENGINE
 # ============================================================
@@ -51,4 +57,22 @@ class PhysicsEngine:
             penalty_seconds=penalty_seconds,
             traction_limit=traction_limit,
             torque_demand=torque_demand
+        )
+
+    def calculate_coasting_duration(self, physics: VehiclePhysics, base_duration: float) -> CoastingResult:
+        
+        # 1. Calculate Factors (Normalized around baseline values)
+        inertia_factor = physics.mass_grams / 90.0
+        magnetic_factor = physics.magnet_downforce_grams / 150.0
+        
+        # 2. Compute duration using independent factors
+        raw_duration = base_duration * inertia_factor * (1.0 + (1.0 - magnetic_factor) * 2.0)
+        
+        # 3. Apply Safety Bounds
+        duration = max(0.05, min(3.0, raw_duration))
+        
+        return CoastingResult(
+            inertia_factor=inertia_factor,
+            magnetic_factor=magnetic_factor,
+            coasting_duration=duration
         )
