@@ -6,6 +6,7 @@ import time
 from orchestrator.driver_model import (
     DriverModel,
 )
+from orchestrator.physics_engine import PhysicsEngine
 
 # ============================================================
 # RACE RUNTIME
@@ -30,6 +31,8 @@ class RaceRuntime:
         )
 
         self.track_config = track_config
+
+        self.physics_engine = PhysicsEngine()
 
         self.running = False
 
@@ -192,9 +195,35 @@ class RaceRuntime:
                 
                 if was_stopped:
                     reaction = driver.generate_reaction_time()
-                    lap_time += reaction
-                    resumed_original_time += reaction
-                    print(f"[LANE {lane_id}] Reaction Time Applied: {reaction:.3f}s")
+                    accel_result = self.physics_engine.calculate_acceleration(physics)
+                    accel_penalty = accel_result.penalty_seconds
+                    
+                    total_delay = reaction + accel_penalty
+                    lap_time += total_delay
+                    resumed_original_time += total_delay
+                    
+                    print(
+                        f"[ACCELERATION EVENT]\n"
+                        f"lane={lane_id}\n"
+                        f"vehicle={profile_id}\n"
+                        f"mass_grams={physics.mass_grams:.1f}\n"
+                        f"magnet_downforce_grams={physics.magnet_downforce_grams:.1f}\n"
+                        f"grip_multiplier={physics.grip_multiplier:.2f}\n"
+                        f"rear_tire_diameter_mm={physics.rear_tire_diameter_mm:.1f}\n"
+                        f"traction_limit={accel_result.traction_limit:.1f}\n"
+                        f"torque_demand={accel_result.torque_demand:.1f}\n"
+                        f"wheelspin={'YES' if accel_result.wheelspin else 'NO'}\n"
+                        f"acceleration_penalty={accel_penalty:.3f}"
+                    )
+                    
+                    print(
+                        f"[LAP COMPOSITION]\n"
+                        f"lane={lane_id}\n"
+                        f"base_lap_time={original_time:.3f}\n"
+                        f"reaction_time={reaction:.3f}\n"
+                        f"acceleration_penalty={accel_penalty:.3f}\n"
+                        f"published_lap_time={resumed_original_time:.3f}"
+                    )
                 
                 pending_lap = None
             else:
@@ -207,8 +236,35 @@ class RaceRuntime:
                 
                 if was_stopped:
                     reaction = driver.generate_reaction_time()
-                    lap_time += reaction
-                    print(f"[LANE {lane_id}] Reaction Time Applied: {reaction:.3f}s")
+                    accel_result = self.physics_engine.calculate_acceleration(physics)
+                    accel_penalty = accel_result.penalty_seconds
+                    
+                    base_lap_time = lap_time
+                    total_delay = reaction + accel_penalty
+                    lap_time += total_delay
+                    
+                    print(
+                        f"[ACCELERATION EVENT]\n"
+                        f"lane={lane_id}\n"
+                        f"vehicle={profile_id}\n"
+                        f"mass_grams={physics.mass_grams:.1f}\n"
+                        f"magnet_downforce_grams={physics.magnet_downforce_grams:.1f}\n"
+                        f"grip_multiplier={physics.grip_multiplier:.2f}\n"
+                        f"rear_tire_diameter_mm={physics.rear_tire_diameter_mm:.1f}\n"
+                        f"traction_limit={accel_result.traction_limit:.1f}\n"
+                        f"torque_demand={accel_result.torque_demand:.1f}\n"
+                        f"wheelspin={'YES' if accel_result.wheelspin else 'NO'}\n"
+                        f"acceleration_penalty={accel_penalty:.3f}"
+                    )
+                    
+                    print(
+                        f"[LAP COMPOSITION]\n"
+                        f"lane={lane_id}\n"
+                        f"base_lap_time={base_lap_time:.3f}\n"
+                        f"reaction_time={reaction:.3f}\n"
+                        f"acceleration_penalty={accel_penalty:.3f}\n"
+                        f"published_lap_time={lap_time:.3f}"
+                    )
 
                 # ------------------------------------------------
                 # DESLOT LOGGING (IMMEDIATE)

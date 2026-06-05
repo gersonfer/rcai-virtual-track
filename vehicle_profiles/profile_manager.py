@@ -249,10 +249,14 @@ class ProfileManager:
             )
 
             if "physics" in profile:
+                phys = profile["physics"]
                 print(
-                    f"  Physics: "
-                    f"{profile['physics']['mass_grams']}g, "
-                    f"Scale {profile['physics']['scale']}"
+                    f"[VEHICLE PHYSICS]\n"
+                    f"vehicle={profile_id}\n"
+                    f"mass_grams={phys.get('mass_grams')}\n"
+                    f"magnet_downforce_grams={phys.get('magnet_downforce_grams')}\n"
+                    f"grip_multiplier={phys.get('grip_multiplier')}\n"
+                    f"rear_tire_diameter_mm={phys.get('rear_tire_diameter_mm')}"
                 )
 
             print()
